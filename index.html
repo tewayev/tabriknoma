@@ -225,12 +225,12 @@ img { display: block; max-width: 100%; }
 .wish-row { display: flex; align-items: flex-end; gap: 12px; }
 .wish textarea { flex: 1; min-height: 96px; resize: none; }
 .wish-send {
-  flex: none; width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center;
+  flex: none; width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center;
   background: #fff; color: var(--rose); box-shadow: 0 10px 22px -8px rgba(110,40,50,.45); transition: transform .2s var(--ease), opacity .2s;
 }
 .wish-send:active { transform: scale(.92); }
 .wish-send:disabled { opacity: .6; }
-.wish-send svg { width: 26px; height: 26px; }
+.wish-send svg { width: 28px; height: 28px; }
 .wish-msg { min-height: 18px; margin-top: 10px; font: 400 13px/1.4 var(--sans); color: rgba(255,255,255,.92); }
 
 /* Barcha tilaklar — yonga suriladigan lenta */
@@ -370,7 +370,7 @@ img { display: block; max-width: 100%; }
           <label class="wish-lbl" for="wText">Tilagingiz</label>
           <div class="wish-row">
             <textarea id="wText" name="text" maxlength="600" placeholder="Kelin-kuyovga tilagingizni yozing…" required></textarea>
-            <button class="wish-send" type="submit" aria-label="Tilakni yuborish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 3.6 9.9 14.1"/><path d="M20.4 3.6a.9.9 0 0 1 .3 1l-5.4 14.9a.9.9 0 0 1-1.7.1l-3.7-6.5-6.5-3.7a.9.9 0 0 1 .1-1.7l14.9-5.4a.9.9 0 0 1 1 .3z"/></svg></button>
+            <button class="wish-send" type="submit" aria-label="Tilakni yuborish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 3.9 9.8a.8.8 0 0 0 0 1.5l6.7 2.1 2.1 6.7a.8.8 0 0 0 1.5 0L20.5 3.5Z"/><path d="m10.6 13.4 9.9-9.9"/></svg></button>
           </div>
           <p class="wish-msg" id="wishMsg" role="status"></p>
         </form>
