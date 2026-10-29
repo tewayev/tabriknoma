@@ -72,7 +72,8 @@ img { display: block; max-width: 100%; }
 
 /* Butun sahifa ortida bitta katta rasm: joyida turadi, kontent uning ustidan suriladi — chok yo'q */
 .page-bg { position: sticky; top: 0; height: 100vh; height: 100lvh; margin-bottom: -100vh; margin-bottom: -100lvh; overflow: hidden; }
-.page-veil { position: absolute; inset: 0; background: rgba(248,245,238,.62); opacity: 0; }
+/* Pastga surilganda oqarmaydi — faqat chetlari yumshoq qorayadi (vinyetka) */
+.page-veil { position: absolute; inset: 0; background: radial-gradient(75% 70% at 50% 50%, rgba(40,25,10,0) 50%, rgba(40,25,10,.38) 100%); opacity: 0; }
 .hero { position: relative; height: 100svh; min-height: 560px; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
 .hero-bg {
   position: absolute; inset: 0;
