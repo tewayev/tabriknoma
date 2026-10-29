@@ -790,7 +790,7 @@ img { display: block; max-width: 100%; }
   function startMusic() {
     if (musicBroken || userPaused || !music.paused) return;
     music.volume = 0;
-    music.play().then(() => { fadeVolume(.7, 2500); syncMusicBtn(); }).catch(() => {});
+    music.play().then(() => { fadeVolume(1, 2500); syncMusicBtn(); }).catch(() => {});
   }
   function syncMusicBtn() {
     musicBtn.classList.toggle('playing', !music.paused);
