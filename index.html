@@ -80,11 +80,13 @@ img { display: block; max-width: 100%; }
 /* Fon sekin oldinga va orqaga kattalashib turadi */
 .main.play .hero-bg { transform: scale(1); animation: kenburns 16s ease-in-out 2.4s infinite alternate; }
 @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.09); } }
+/* Pastga surilganda rasm qotib turadi — faqat birinchi ekranda "nafas oladi" */
+.main.scrolled .hero-bg { animation-play-state: paused; }
 .hero-veil {
   position: absolute; inset: 0;
   background:
     radial-gradient(50% 36% at 50% 50%, rgba(255,250,240,.45), rgba(255,250,240,0) 100%),
-    linear-gradient(180deg, rgba(60,45,15,.16) 0%, rgba(60,45,15,.02) 30%, rgba(60,45,15,.02) 65%, rgba(248,245,238,.75) 100%);
+    linear-gradient(180deg, rgba(60,45,15,.16) 0%, rgba(60,45,15,.02) 30%, rgba(60,45,15,.02) 62%, rgba(248,245,238,.8) 88%, #f8f5ee 100%);
 }
 /* 1-sahifadagi oqarishdan silliq davom etadi */
 .hero-white { position: absolute; inset: 0; background: #fffaf3; opacity: .92; transition: opacity .6s ease; pointer-events: none; }
@@ -126,9 +128,10 @@ img { display: block; max-width: 100%; }
 .parallax-bg { position: sticky; top: 0; height: 100vh; height: 100lvh; margin-bottom: -100vh; margin-bottom: -100lvh; overflow: hidden; background: url(assets/pillars-soft.webp) 80% center / cover; }
 .parallax-bg::after { content: ''; position: absolute; inset: 0; background: rgba(248,245,238,.62); }
 .parallax-content { position: relative; z-index: 1; }
+.parallax-fade { position: absolute; left: 0; right: 0; top: 0; height: 180px; background: linear-gradient(#f8f5ee, rgba(248,245,238,0)); pointer-events: none; }
 
 /* ========== Baxtli onlargacha ========== */
-.sec { position: relative; padding: 80px 20px; text-align: center; }
+.sec { position: relative; padding: 72px 20px 0; text-align: center; }
 /* Taymer, kalendar va xarita bir xil enda — chetlari bir tekis */
 .block { width: min(100%, 420px); margin: 0 auto; }
 .sec-title { font: 300 clamp(28px, 7.5vw, 36px)/1.15 var(--sans); letter-spacing: -.01em; color: var(--ink); }
@@ -202,7 +205,7 @@ img { display: block; max-width: 100%; }
 }
 .loc-share:active { transform: scale(.92); }
 /* Pastki suzuvchi tugmalar karta ustiga tushmasligi uchun */
-.wishes { padding-top: 20px; padding-bottom: 150px; }
+.wishes { padding-bottom: 150px; }
 .loc-share svg { width: 28px; height: 28px; }
 
 /* ========== Tilak yuborish ========== */
@@ -309,6 +312,7 @@ img { display: block; max-width: 100%; }
 
     <div class="parallax">
     <div class="parallax-bg" aria-hidden="true"></div>
+    <div class="parallax-fade" aria-hidden="true"></div>
     <div class="parallax-content">
     <section class="sec count" id="countdown">
       <div class="block">
@@ -453,6 +457,7 @@ img { display: block; max-width: 100%; }
     touchY = null;
   });
   // G'ildirak bilan ochilganda brauzer musiqaga ruxsat bermaydi — birinchi teginishda yoqamiz
+  addEventListener('scroll', () => main.classList.toggle('scrolled', scrollY > 4), { passive: true });
   ['pointerdown', 'keydown', 'touchend'].forEach(ev =>
     document.addEventListener(ev, () => { if (opened) startMusic(); }, { passive: true }));
 
