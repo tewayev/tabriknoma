@@ -239,19 +239,25 @@ img { display: block; max-width: 100%; }
 .wall-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font: 400 15px/1 var(--sans); color: var(--ink-soft); }
 .wall-count { min-width: 28px; padding: 6px 10px; border-radius: 999px; background: var(--rose); color: #fff; font: 500 12px/1 var(--sans); text-align: center; }
 .wall-track {
-  display: flex; gap: 12px; margin: 14px -20px 0; padding: 4px 20px 18px; overflow-x: auto;
+  display: flex; align-items: flex-start; gap: 14px; margin: 14px -20px 0; padding: 6px 20px 30px; overflow-x: auto;
   scroll-snap-type: x mandatory; scroll-padding: 0 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .wall-track::-webkit-scrollbar { display: none; }
+/* Namunadagidek kartochka: balandligi matn hajmiga qarab; ostida ikki qavat "qog'oz" */
 .wcard {
-  flex: 0 0 min(78%, 300px); scroll-snap-align: start; padding: 18px 18px 16px; border-radius: 22px;
-  background: rgba(255,253,248,.94); border: 1px solid #ecdfc6; box-shadow: 0 16px 30px -20px rgba(110,70,40,.45);
-  display: flex; flex-direction: column; justify-content: space-between; min-height: 150px;
+  position: relative; flex: 0 0 min(80%, 310px); scroll-snap-align: start; padding: 20px 20px 18px; border-radius: 22px; text-align: left;
+  background: #fff; border: 1px solid #ece6dc; box-shadow: 0 1px 2px rgba(40,30,20,.05), 0 18px 30px -22px rgba(60,40,20,.35);
 }
-.wcard p { font: 400 15px/1.5 var(--sans); color: var(--ink); white-space: pre-wrap; word-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.wcard .who { margin-top: 14px; display: flex; align-items: center; gap: 10px; font: 500 13px/1.2 var(--sans); color: var(--rose); }
-.wcard .who i { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; font: 500 13px/1 var(--sans); font-style: normal; color: #fff; background: linear-gradient(165deg, #b98b8b, #dfc0b6); }
-.wcard.empty { justify-content: center; text-align: center; color: var(--ink-soft); }
+.wcard::before, .wcard::after { content: ''; position: absolute; z-index: -1; left: 10px; right: 10px; bottom: -7px; height: 30px; border-radius: 0 0 20px 20px; background: #fff; border: 1px solid #ece6dc; border-top: 0; }
+.wcard::after { left: 20px; right: 20px; bottom: -13px; opacity: .8; }
+.wcard .av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #2a2621; color: #fff; font: 500 15px/1 var(--sans); }
+.wcard h4 { margin-top: 14px; font: 600 19px/1.25 var(--sans); color: var(--ink); word-wrap: break-word; }
+.wcard .meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 400 13px/1 var(--sans); color: #8b847a; }
+.wcard .meta svg { width: 15px; height: 15px; }
+.wcard p { margin-top: 14px; font: 400 15px/1.55 var(--sans); color: #4d4740; white-space: pre-wrap; word-wrap: break-word; }
+.wcard.long:not(.open) p { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.wcard .more { margin-top: 12px; padding: 0; font: 500 15px/1 var(--sans); color: var(--ink); }
+.wcard.empty { text-align: center; color: var(--ink-soft); }
 
 /* ========== Musiqa va ulashish ========== */
 .fab {
@@ -361,7 +367,7 @@ img { display: block; max-width: 100%; }
           <label class="wish-lbl" for="wText">Tilagingiz</label>
           <div class="wish-row">
             <textarea id="wText" name="text" maxlength="600" placeholder="Kelin-kuyovga tilagingizni yozing…" required></textarea>
-            <button class="wish-send" type="submit" aria-label="Tilakni yuborish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10.2 13.8"/><path d="M21 3 14.4 21l-4.2-7.2L3 9.6 21 3z"/></svg></button>
+            <button class="wish-send" type="submit" aria-label="Tilakni yuborish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 3.6 9.9 14.1"/><path d="M20.4 3.6a.9.9 0 0 1 .3 1l-5.4 14.9a.9.9 0 0 1-1.7.1l-3.7-6.5-6.5-3.7a.9.9 0 0 1 .1-1.7l14.9-5.4a.9.9 0 0 1 1 .3z"/></svg></button>
           </div>
           <p class="wish-msg" id="wishMsg" role="status"></p>
         </form>
@@ -550,10 +556,30 @@ img { display: block; max-width: 100%; }
   let wishes = [], serverOk = true;
   function renderWishes() {
     $('#wishCount').textContent = wishes.length;
+    const clock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
     $('#wishTrack').innerHTML = wishes.length
-      ? wishes.map(w => `<article class="wcard"><p>${esc(w.text)}</p><span class="who"><i>${esc((w.name || '?').trim().charAt(0).toUpperCase())}</i>${esc(w.name)}</span></article>`).join('')
+      ? wishes.map(w => {
+          const long = (w.text || '').length > 220;
+          return `<article class="wcard${long ? ' long' : ''}"><span class="av">${esc((w.name || '?').trim().charAt(0).toUpperCase())}</span>`
+            + `<h4>${esc(w.name)}</h4><span class="meta">${clock}${timeAgo(w.ts)}</span><p>${esc(w.text)}</p>`
+            + (long ? '<button class="more" type="button">To‘liq o‘qish</button>' : '') + '</article>';
+        }).join('')
       : '<article class="wcard empty"><p>Birinchi tilakni siz yozing</p></article>';
   }
+  function timeAgo(ts) {
+    const m = Math.floor((Date.now() - (ts || 0)) / 6e4);
+    if (m < 1) return 'hozirgina';
+    if (m < 60) return m + ' daqiqa oldin';
+    if (m < 1440) return Math.floor(m / 60) + ' soat oldin';
+    if (m < 10080) return Math.floor(m / 1440) + ' kun oldin';
+    const months = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+    const d = new Date(ts); return d.getDate() + '-' + months[d.getMonth()];
+  }
+  $('#wishTrack').addEventListener('click', e => {
+    const b = e.target.closest('.more'); if (!b) return;
+    const open = b.parentElement.classList.toggle('open');
+    b.textContent = open ? 'Yopish' : 'To‘liq o‘qish';
+  });
   async function loadWishes() {
     try {
       const r = await fetch('/api/wishes', { cache: 'no-store' });
