@@ -15,7 +15,6 @@
   <link rel="preload" as="image" href="assets/flowers.webp">
   <link rel="preload" as="image" href="assets/seal-rose.webp">
   <link rel="preload" as="image" href="assets/pillars.webp">
-  <link rel="preload" as="image" href="assets/garland.webp">
   <style>
 :root {
   --ivory: #f8f5ee;
@@ -127,15 +126,6 @@ img { display: block; max-width: 100%; }
 .parallax-bg { position: sticky; top: 0; height: 100vh; height: 100lvh; margin-bottom: -100vh; margin-bottom: -100lvh; overflow: hidden; background: url(assets/pillars-soft.webp) 80% center / cover; }
 .parallax-bg::after { content: ''; position: absolute; inset: 0; background: rgba(248,245,238,.62); }
 .parallax-content { position: relative; z-index: 1; }
-/* Gulchambar — bosh ekran va pastki qism orasidagi chegarani yopadi, sekin yonga suriladi */
-.garland {
-  --gh: clamp(104px, 17vw, 170px);
-  position: absolute; left: 0; right: 0; top: 0; z-index: 3; height: var(--gh); transform: translateY(-50%); pointer-events: none;
-  background: url(assets/garland.webp) 0 50% / calc(var(--gh) * 5.309) var(--gh) repeat-x;
-  filter: drop-shadow(0 8px 10px rgba(90,60,40,.18));
-  animation: drift 70s linear infinite;
-}
-@keyframes drift { to { background-position-x: calc(var(--gh) * -5.309); } }
 
 /* ========== Baxtli onlargacha ========== */
 .sec { position: relative; padding: 80px 20px; text-align: center; }
@@ -318,7 +308,6 @@ img { display: block; max-width: 100%; }
     </section>
 
     <div class="parallax">
-    <div class="garland" aria-hidden="true"></div>
     <div class="parallax-bg" aria-hidden="true"></div>
     <div class="parallax-content">
     <section class="sec count" id="countdown">
