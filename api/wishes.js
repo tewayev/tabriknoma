@@ -23,6 +23,19 @@ module.exports = async function handler(req, res) {
   };
 
   try {
+    // Tilakni o'chirish (faqat egasi uchun): GET /api/wishes?admin=<ADMIN_KEY>&remove=<ism>
+    const q = req.query || {};
+    if (req.method === 'GET' && q.remove) {
+      if (!process.env.ADMIN_KEY || q.admin !== process.env.ADMIN_KEY) return res.status(403).json({ error: 'forbidden' });
+      const items = (await redis(['LRANGE', KEY, '0', '-1'])) || [];
+      let removed = 0;
+      for (const raw of items) {
+        let w = null; try { w = JSON.parse(raw); } catch {}
+        if (w && w.name === String(q.remove)) removed += Number(await redis(['LREM', KEY, '0', raw])) || 0;
+      }
+      return res.status(200).json({ removed });
+    }
+
     if (req.method === 'GET') {
       const items = (await redis(['LRANGE', KEY, '0', '499'])) || [];
       const wishes = items.map((s) => { try { return JSON.parse(s); } catch { return null; } }).filter(Boolean);
