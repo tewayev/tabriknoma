@@ -497,8 +497,6 @@ img { display: block; max-width: 100%; }
 .butterflies { position: fixed; inset: 0; z-index: 55; pointer-events: none; overflow: hidden; }
 .bf { position: absolute; left: 0; top: 0; width: 48px; height: 40px; will-change: transform; }
 .bf svg { width: 100%; height: 100%; overflow: visible; }
-.bf .wings { transform-box: view-box; transform-origin: 50% 50%; animation: flap var(--flap, .32s) ease-in-out infinite alternate; }
-@keyframes flap { from { transform: scaleX(1); } to { transform: scaleX(.18); } }
 
 .toast { position: fixed; z-index: 90; left: 50%; bottom: 26px; transform: translate(-50%, 30px); padding: 12px 20px; border-radius: 999px; background: rgba(58,50,37,.92); color: #fff; font: 500 14px/1 var(--sans); white-space: nowrap; opacity: 0; transition: opacity .35s, transform .35s var(--ease); pointer-events: none; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -1230,60 +1228,151 @@ img { display: block; max-width: 100%; }
   (function butterflies() {
     if (reduced) return;
     const layer = $('#butterflies');
+    // Rasmdagidek: yarim shaffof qanot, ichki rangli tus, oltin-jigarrang chet va tomirlar.
     const kinds = [
-      { a: '#fbe3b8', b: '#d99a4e', edge: '#8f5f22', spot: '#fff6e2' },
-      { a: '#c9dbf5', b: '#5b7db4', edge: '#2e4a7c', spot: '#ffffff' },
-      { a: '#fbdfe2', b: '#d98a9a', edge: '#8e4656', spot: '#fff4f5' },
-      { a: '#fff6dc', b: '#c9a45c', edge: '#7d5b22', spot: '#ffffff' }
+      { tint: '#a9c3ec', edge: '#9a6a2c' },
+      { tint: '#f2b6c6', edge: '#a0614a' },
+      { tint: '#b2dfcc', edge: '#8a6a30' },
+      { tint: '#c8b6ee', edge: '#8b6436' },
+      { tint: '#f6c79c', edge: '#a3612a' },
+      { tint: '#efdc9f', edge: '#8f5f22' }
     ];
+    const FORE = 'M-1 -6 C-8 -22 -26 -37 -42 -35 C-49 -34 -49 -26 -46 -18 C-42 -8 -26 -2 -2 -1 Z';
+    const HIND = 'M-1 0 C-18 0 -36 4 -38 14 C-40 25 -30 33 -18 30 C-8 28 -3 18 -1 4 Z';
+    const svgFor = (c, i) => `
+      <svg viewBox="-50 -40 100 80">
+        <defs>
+          <linearGradient id="bfg${i}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="-44" y2="-4">
+            <stop offset="0" stop-color="${c.tint}" stop-opacity=".95"/>
+            <stop offset=".55" stop-color="#ffffff" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#fffdf8" stop-opacity=".82"/>
+          </linearGradient>
+          <radialGradient id="bft${i}" gradientUnits="userSpaceOnUse" cx="-45" cy="-27" r="16">
+            <stop offset="0" stop-color="${c.edge}" stop-opacity=".55"/>
+            <stop offset="1" stop-color="${c.edge}" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="bfb${i}" x1="0" x2="1">
+            <stop offset="0" stop-color="#f3e2ae"/><stop offset=".5" stop-color="#a87b2f"/><stop offset="1" stop-color="#e9d39a"/>
+          </linearGradient>
+          <clipPath id="bfc${i}"><path d="${FORE}"/></clipPath>
+          <g id="bfw${i}" stroke-linejoin="round">
+            <path d="${HIND}" fill="url(#bfg${i})" stroke="${c.edge}" stroke-width="1.7"/>
+            <path d="${FORE}" fill="url(#bfg${i})" stroke="${c.edge}" stroke-width="1.7"/>
+            <rect x="-50" y="-40" width="50" height="40" fill="url(#bft${i})" clip-path="url(#bfc${i})"/>
+            <g fill="none" stroke="${c.edge}" stroke-width=".6" stroke-linecap="round" opacity=".6">
+              <path d="M-2 -4 L-40 -33M-2 -3 L-45 -25M-2 -3 L-43 -15M-2 -2 L-33 -6M-3 -5 L-24 -30"/>
+              <path d="M-2 2 L-35 9M-2 3 L-36 21M-2 4 L-25 29M-2 4 L-12 28"/>
+            </g>
+          </g>
+        </defs>
+        <g class="wl"><use href="#bfw${i}"/></g>
+        <g class="wr"><g transform="scale(-1,1)"><use href="#bfw${i}"/></g></g>
+        <ellipse cx="0" cy="10" rx="2.5" ry="12" fill="url(#bfb${i})"/>
+        <path d="M-2.2 3H2.2M-2.4 7H2.4M-2.4 11H2.4M-2.2 15H2.2M-1.8 19H1.8" stroke="#8a6326" stroke-width=".5" opacity=".7"/>
+        <ellipse cx="0" cy="-6" rx="3.2" ry="6" fill="url(#bfb${i})"/>
+        <circle cx="0" cy="-13.5" r="2.6" fill="#a87b2f"/>
+        <path d="M-1 -15.5 C-3 -24 -7 -30 -11 -33M1 -15.5 C3 -24 7 -30 11 -33" stroke="#8a6326" stroke-width=".9" fill="none" stroke-linecap="round"/>
+        <circle cx="-11" cy="-33" r="1.3" fill="#8a6326"/><circle cx="11" cy="-33" r="1.3" fill="#8a6326"/>
+      </svg>`;
+
+    // Ekran 2 ustun × 3 qator zonaga bo'linadi: har zonada bitta kapalak,
+    // ya'ni doim chapda 3 ta, o'ngda 3 ta. Vaqti-vaqti bilan ikki kapalak
+    // zonasini almashadi (chap↔o'ng yoki tepa↔past), shunda ular ekran bo'ylab
+    // uchadi, lekin taqsimot buzilmaydi.
+    const COLS = 2, ROWS = 3, GAP = 10;
+    const zoneRect = (z, W, H) => ({ x: (z % COLS) * W / COLS, y: Math.floor(z / COLS) * H / ROWS, w: W / COLS, h: H / ROWS });
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pickTarget = (b) => {
+      let u, v;
+      do { u = rand(.18, .82); v = rand(.18, .82); } while (Math.hypot(u - b.tu, v - b.tv) < .35);
+      b.tu = u; b.tv = v;
+    };
     const bfs = kinds.map((c, i) => {
       const el = document.createElement('div'); el.className = 'bf';
-      el.style.setProperty('--flap', (0.22 + Math.random() * .14).toFixed(2) + 's');
-      el.innerHTML = `
-        <svg viewBox="-50 -40 100 80">
-          <defs>
-            <radialGradient id="bu${i}" cx="30%" cy="30%" r="90%"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></radialGradient>
-            <radialGradient id="bl${i}" cx="30%" cy="20%" r="90%"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}" stop-opacity=".9"/></radialGradient>
-          </defs>
-          <g class="wings">
-            <path d="M-2 -4 C-14 -36 -46 -40 -46 -18 C-46 -4 -28 2 -3 0 Z" fill="url(#bu${i})" stroke="${c.edge}" stroke-width="1.6"/>
-            <path d="M-2 2 C-26 4 -38 16 -32 28 C-26 38 -10 30 -2 8 Z" fill="url(#bl${i})" stroke="${c.edge}" stroke-width="1.6"/>
-            <path d="M2 -4 C14 -36 46 -40 46 -18 C46 -4 28 2 3 0 Z" fill="url(#bu${i})" stroke="${c.edge}" stroke-width="1.6"/>
-            <path d="M2 2 C26 4 38 16 32 28 C26 38 10 30 2 8 Z" fill="url(#bl${i})" stroke="${c.edge}" stroke-width="1.6"/>
-            <g fill="${c.spot}" opacity=".85"><circle cx="-36" cy="-22" r="3"/><circle cx="-28" cy="-30" r="2"/><circle cx="36" cy="-22" r="3"/><circle cx="28" cy="-30" r="2"/><circle cx="-24" cy="22" r="2.4"/><circle cx="24" cy="22" r="2.4"/></g>
-            <g fill="none" stroke="${c.edge}" stroke-width=".8" opacity=".5"><path d="M-4 -3 L-38 -24M-4 -2 L-30 -6M-3 4 L-26 22"/><path d="M4 -3 L38 -24M4 -2 L30 -6M3 4 L26 22"/></g>
-          </g>
-          <ellipse cx="0" cy="2" rx="2.6" ry="15" fill="${c.edge}"/>
-          <circle cx="0" cy="-14" r="3" fill="${c.edge}"/>
-          <path d="M-1 -16 C-4 -26 -9 -30 -12 -31M1 -16 C4 -26 9 -30 12 -31" stroke="${c.edge}" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-        </svg>`;
+      el.innerHTML = svgFor(c, i);
       layer.appendChild(el);
-      return {
-        el, x: Math.random() * innerWidth, y: Math.random() * innerHeight,
-        h: Math.random() * Math.PI * 2, turn: 0, speed: 38 + Math.random() * 26,
-        scale: .62 + Math.random() * .3, phase: Math.random() * 10, rest: 0
+      const scale = rand(.62, .82);
+      const z = zoneRect(i, innerWidth, innerHeight);
+      const b = {
+        el, wl: el.querySelector('.wl'), wr: el.querySelector('.wr'),
+        zone: i, tu: .5, tv: .5, swapping: false,
+        x: z.x + rand(.3, .7) * z.w, y: z.y + rand(.3, .7) * z.h, h: rand(0, Math.PI * 2),
+        speed: rand(42, 58), scale, r: 23 * scale,
+        phase: rand(0, 10), flapRate: rand(3.2, 4.4), flap: rand(0, 1)
       };
+      pickTarget(b);
+      return b;
     });
+
+    function swapZones() {
+      const free = bfs.filter((b) => !b.swapping);
+      const pairs = [];
+      for (const a of free) for (const b of free) {
+        if (a.zone >= b.zone) continue;
+        const sameRow = Math.floor(a.zone / COLS) === Math.floor(b.zone / COLS);
+        const vertical = a.zone % COLS === b.zone % COLS && Math.abs(a.zone - b.zone) === COLS;
+        if (sameRow || vertical) pairs.push([a, b]);
+      }
+      if (pairs.length) {
+        const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+        [a.zone, b.zone] = [b.zone, a.zone];
+        a.swapping = b.swapping = true;
+        pickTarget(a); pickTarget(b);
+      }
+      setTimeout(swapZones, rand(9000, 14000));
+    }
+    setTimeout(swapZones, rand(6000, 9000));
+
     let last = performance.now();
     function frame(now) {
       const dt = Math.min(.05, (now - last) / 1000); last = now;
-      const W = innerWidth, H = innerHeight, m = 60;
+      const W = innerWidth, H = innerHeight;
       for (const b of bfs) {
-        b.turn += (Math.random() - .5) * 3 * dt;
-        b.turn *= .98;
-        let steer = 0;
-        const cx = W / 2 - b.x, cy = H / 2 - b.y;
-        if (b.x < m || b.x > W - m || b.y < m || b.y > H - m) {
-          const want = Math.atan2(cy, cx);
-          let diff = ((want - b.h + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-          steer = diff * 1.8;
+        const z = zoneRect(b.zone, W, H);
+        const tx = z.x + b.tu * z.w, ty = z.y + b.tv * z.h;
+        let dx = tx - b.x, dy = ty - b.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        if (b.swapping && b.x > z.x && b.x < z.x + z.w && b.y > z.y && b.y < z.y + z.h) b.swapping = false;
+        if (dist < 28) pickTarget(b);
+        let vx = dx / dist, vy = dy / dist;
+        // Boshqa kapalaklardan oldindan qochish
+        for (const o of bfs) {
+          if (o === b) continue;
+          const ox = b.x - o.x, oy = b.y - o.y, d = Math.hypot(ox, oy) || .01;
+          const minD = b.r + o.r + GAP, R = minD + 90;
+          if (d < R) {
+            const k = ((R - d) / (R - minD)) ** 2 * 2.5;
+            vx += ox / d * k; vy += oy / d * k;
+          }
         }
-        b.h += (b.turn + steer) * dt;
+        const want = Math.atan2(vy, vx);
+        const diff = ((want - b.h + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        const maxTurn = 2.6 * dt;
         b.phase += dt;
-        const v = b.speed * (0.8 + Math.sin(b.phase * 2.2) * .25);
+        b.h += Math.max(-maxTurn, Math.min(maxTurn, diff)) + Math.sin(b.phase * 1.7) * .6 * dt;
+        const v = b.speed * Math.max(.45, Math.min(1, dist / 120)) * (.85 + Math.sin(b.phase * 2.2) * .15);
         b.x += Math.cos(b.h) * v * dt;
-        b.y += Math.sin(b.h) * v * dt + Math.sin(b.phase * 6) * 12 * dt;
-        const rot = b.h * 180 / Math.PI + 90 + Math.sin(b.phase * 3) * 8;
+        b.y += Math.sin(b.h) * v * dt + Math.sin(b.phase * 6) * 10 * dt;
+      }
+      // Qat'iy shart: qanot chetlari orasida kamida 10px masofa
+      for (let it = 0; it < 3; it++) for (let i = 0; i < bfs.length; i++) for (let j = i + 1; j < bfs.length; j++) {
+        const a = bfs[i], b = bfs[j];
+        const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || .01;
+        const minD = a.r + b.r + GAP;
+        if (d < minD) {
+          const p = (minD - d) / 2, ux = dx / d, uy = dy / d;
+          a.x -= ux * p; a.y -= uy * p; b.x += ux * p; b.y += uy * p;
+        }
+      }
+      for (const b of bfs) {
+        b.x = Math.max(b.r, Math.min(W - b.r, b.x));
+        b.y = Math.max(b.r, Math.min(H - b.r, b.y));
+        // Qanot qoqish: ikkala qanot ham tana o'qi (x=0) atrofida qisqaradi
+        b.flap += dt * b.flapRate;
+        const s = (.24 + .76 * (.5 + .5 * Math.cos(b.flap * Math.PI * 2))).toFixed(3);
+        b.wl.setAttribute('transform', `scale(${s},1)`);
+        b.wr.setAttribute('transform', `scale(${s},1)`);
+        const rot = b.h * 180 / Math.PI + 90;
         b.el.style.transform = `translate(${b.x - 24}px, ${b.y - 20}px) rotate(${rot}deg) scale(${b.scale})`;
       }
       requestAnimationFrame(frame);
