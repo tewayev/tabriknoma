@@ -47,32 +47,28 @@ img { display: block; max-width: 100%; }
   display: grid; place-items: center;
   cursor: pointer; outline: none; touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 1s ease, visibility 1s;
+  transition: opacity .5s ease, visibility .5s;
 }
 .intro-bg {
   position: absolute; inset: 0;
   background: #8fb0cc url(assets/flowers.webp) center / cover;
-  animation: breathe 14s ease-in-out infinite alternate;
-  transition: transform 1.6s var(--ease);
 }
 /* Bosilganda sekin oqarib boradi */
-.intro-white { position: absolute; inset: 0; background: #fffaf3; opacity: 0; transition: opacity 1.4s ease; }
+.intro-white { position: absolute; inset: 0; background: #fffaf3; opacity: 0; transition: opacity .5s ease; }
 .seal {
   position: relative; width: clamp(130px, 30vw, 190px); height: auto;
   filter: drop-shadow(0 12px 18px rgba(60,20,30,.35));
   opacity: 0; animation: sealIn 1.2s var(--ease) .3s forwards;
-  transition: transform .6s var(--ease), opacity .6s ease;
+  transition: transform .45s var(--ease), opacity .45s ease;
 }
 .intro:hover .seal, .intro:focus-visible .seal { transform: scale(1.04); }
 .intro.opening .seal { opacity: 0; transform: scale(.65) rotate(-14deg); }
-.intro.opening .intro-bg { animation: none; transform: scale(1.12); }
 .intro.opening .intro-white { opacity: .92; }
 .intro.gone { opacity: 0; visibility: hidden; pointer-events: none; }
 @keyframes sealIn { from { opacity: 0; transform: scale(1.2); } to { opacity: 1; transform: none; } }
-@keyframes breathe { from { transform: scale(1); } to { transform: scale(1.06); } }
 
 /* ========== 2-SAHIFA: asosiy ========== */
-.main { position: relative; z-index: 1; opacity: 0; transition: opacity 1s ease; }
+.main { position: relative; z-index: 1; opacity: 0; transition: opacity .5s ease; }
 .main.revealed { opacity: 1; }
 
 .hero { position: relative; height: 100svh; min-height: 560px; overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
@@ -92,7 +88,7 @@ img { display: block; max-width: 100%; }
     linear-gradient(180deg, rgba(60,45,15,.16) 0%, rgba(60,45,15,.02) 30%, rgba(60,45,15,.02) 65%, rgba(248,245,238,.75) 100%);
 }
 /* 1-sahifadagi oqarishdan silliq davom etadi */
-.hero-white { position: absolute; inset: 0; background: #fffaf3; opacity: .92; transition: opacity 1.8s ease .1s; pointer-events: none; }
+.hero-white { position: absolute; inset: 0; background: #fffaf3; opacity: .92; transition: opacity .9s ease; pointer-events: none; }
 .main.play .hero-white { opacity: 0; }
 .spark { position: absolute; border-radius: 50%; background: var(--gold-bright); opacity: .35; animation: spark 9s ease-in-out infinite; }
 @keyframes spark { 0%, 100% { transform: translateY(0) scale(1); opacity: .25; } 50% { transform: translateY(-26px) scale(1.15); opacity: .6; } }
@@ -372,7 +368,7 @@ img { display: block; max-width: 100%; }
     opened = true;
     startMusic();
     intro.classList.add('opening');
-    await wait(reduced ? 50 : 1300);
+    await wait(reduced ? 50 : 500);
     window.scrollTo(0, 0);
     main.classList.add('revealed');
     main.removeAttribute('aria-hidden');
@@ -380,7 +376,7 @@ img { display: block; max-width: 100%; }
     intro.classList.add('gone');
     $('#fab').classList.add('show');
     requestAnimationFrame(() => main.classList.add('play'));
-    setTimeout(() => intro.remove(), 1200);
+    setTimeout(() => intro.remove(), 600);
   }
   intro.addEventListener('click', openInvite);
   intro.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openInvite(); } });
