@@ -7,13 +7,13 @@
   <meta name="description" content="Shaxzodbek va Mohigulning nikoh to‘yiga taklifnoma. 14-noyabr, soat 18:30.">
   <meta property="og:title" content="Shaxzodbek & Mohigul — To‘y taklifnomasi">
   <meta property="og:description" content="Sizni nikoh to‘yimizga lutfan taklif etamiz. 14-noyabr, soat 18:30.">
-  <meta property="og:image" content="assets/flowers.webp">
+  <meta property="og:image" content="assets/envelope-wide.webp">
   <meta name="theme-color" content="#f3e9d2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/flowers.webp">
-  <link rel="preload" as="image" href="assets/seal-rose.webp">
+  <link rel="preload" as="image" href="assets/envelope-tall.webp" media="(max-aspect-ratio: 1/1)">
+  <link rel="preload" as="image" href="assets/envelope-wide.webp" media="(min-aspect-ratio: 1/1)">
   <link rel="preload" as="image" href="assets/pillars.webp">
   <style>
 :root {
@@ -50,21 +50,17 @@ img { display: block; max-width: 100%; }
   transition: opacity .35s ease, visibility .35s;
 }
 .intro-bg {
+  /* Konvert surati; muhr suratda ekranning o'rtasiga to'g'ri keladi */
   position: absolute; inset: 0;
-  background: #8fb0cc url(assets/flowers.webp) center / cover;
+  background: #2a1a1c url(assets/envelope-wide.webp) 50% 48% / cover;
+  transition: transform .5s cubic-bezier(.5, 0, .75, 0);
 }
-/* Bosilganda sekin oqarib boradi */
-.intro-white { position: absolute; inset: 0; z-index: 2; background: #fffaf3; opacity: 0; transition: opacity .35s ease; }
-.seal {
-  position: relative; width: clamp(130px, 30vw, 190px); height: auto;
-  filter: drop-shadow(0 12px 18px rgba(60,20,30,.35));
-  opacity: 0; animation: sealIn 1.2s var(--ease) .3s forwards;
-  transition: transform .45s var(--ease), opacity .45s ease;
-}
-.intro:hover .seal, .intro:focus-visible .seal { transform: scale(1.04); }
-.intro.opening .intro-white { opacity: .92; }
+@media (max-aspect-ratio: 1/1) { .intro-bg { background-image: url(assets/envelope-tall.webp); } }
+/* Bosilganda: biroz ichkariga kattalashib, qorayib o'tadi */
+.intro-dark { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity .45s ease; }
+.intro.opening .intro-bg { transform: scale(1.08); }
+.intro.opening .intro-dark { opacity: 1; }
 .intro.gone { opacity: 0; visibility: hidden; pointer-events: none; }
-@keyframes sealIn { from { opacity: 0; transform: scale(1.2); } to { opacity: 1; transform: none; } }
 
 /* ========== 2-SAHIFA: asosiy ========== */
 .main { position: relative; z-index: 1; opacity: 0; transition: opacity .35s ease; }
@@ -94,7 +90,7 @@ img { display: block; max-width: 100%; }
     linear-gradient(180deg, rgba(60,45,15,.16) 0%, rgba(60,45,15,.02) 30%, rgba(60,45,15,.02) 100%);
 }
 /* 1-sahifadagi oqarishdan silliq davom etadi */
-.hero-white { position: absolute; inset: 0; background: #fffaf3; opacity: .92; transition: opacity .6s ease; pointer-events: none; }
+.hero-white { position: absolute; inset: 0; background: #000; opacity: 1; transition: opacity .6s ease; pointer-events: none; }
 .main.play .hero-white { opacity: 0; }
 .spark { position: absolute; border-radius: 50%; background: var(--gold-bright); opacity: .35; animation: spark 9s ease-in-out infinite; }
 @keyframes spark { 0%, 100% { transform: translateY(0) scale(1); opacity: .25; } 50% { transform: translateY(-26px) scale(1.15); opacity: .6; } }
@@ -336,8 +332,7 @@ img { display: block; max-width: 100%; }
   <!-- ===== 1-sahifa ===== -->
   <section class="intro" id="intro" role="button" tabindex="0" aria-label="Taklifnomani ochish">
     <div class="intro-bg"></div>
-    <div class="intro-white"></div>
-    <img class="seal" src="assets/seal-rose.webp" alt="" width="600" height="600">
+    <div class="intro-dark"></div>
   </section>
 
   <!-- ===== 2-sahifa ===== -->
@@ -500,7 +495,7 @@ img { display: block; max-width: 100%; }
     opened = true;
     startMusic();
     intro.classList.add('opening');
-    await wait(reduced ? 50 : 350);
+    await wait(reduced ? 50 : 450);
     window.scrollTo(0, 0);
     main.classList.add('revealed');
     main.removeAttribute('aria-hidden');
