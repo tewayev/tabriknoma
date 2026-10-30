@@ -240,7 +240,7 @@ img { display: block; max-width: 100%; }
 .wall-track {
   /* Bitta kartochka to'liq ko'rinadi; surilganda keyingisi joyiga "chiq" etib tushadi */
   /* Lenta butun ekran enida: o'rtadagi tilak markazda, yonidagilar ham to'liq ko'rinadi */
-  --cw: min(380px, 78vw);
+  --cw: min(360px, 72vw);
   display: flex; align-items: center; gap: 16px; width: 100vw; margin: 14px 0 0 calc(50% - 50vw);
   padding: 6px calc(50vw - var(--cw) / 2) 30px; overflow-x: auto; overflow-y: hidden;
   scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; cursor: grab;
@@ -249,20 +249,23 @@ img { display: block; max-width: 100%; }
 /* Namunadagidek kartochka: balandligi matn hajmiga qarab; ostida ikki qavat "qog'oz" */
 .wcard {
   position: relative; flex: 0 0 var(--cw); scroll-snap-align: center; scroll-snap-stop: always;
-  transition: transform .45s var(--ease), opacity .45s ease; transform: scale(.92); opacity: .6; padding: 20px 20px 18px; border-radius: 22px; text-align: left;
-  background: #fff; border: 1px solid #ece6dc; box-shadow: 0 1px 2px rgba(40,30,20,.05), 0 18px 30px -22px rgba(60,40,20,.35);
+  transition: transform .45s var(--ease), opacity .45s ease; transform: scale(.92); opacity: .6; padding: 16px 18px 16px; border-radius: 22px; text-align: left; color: #fff;
+  background: linear-gradient(165deg, #b98b8b 0%, #c9a09d 50%, #dfc0b6 100%);
+  /* ostidagi ikki qavat "qog'oz" — soya bilan; psevdo-elementlar transform ichida kartochka ustiga chiqib qolardi */
+  box-shadow: 0 7px 0 -4px #e9cfc8, 0 13px 0 -8px #f1dfda, 0 22px 30px -20px rgba(120,60,60,.5);
 }
-.wcard::before, .wcard::after { content: ''; position: absolute; z-index: -1; left: 10px; right: 10px; bottom: -7px; height: 30px; border-radius: 0 0 20px 20px; background: #fff; border: 1px solid #ece6dc; border-top: 0; }
-.wcard::after { left: 20px; right: 20px; bottom: -13px; opacity: .8; }
 .wcard.on { transform: none; opacity: 1; }
-.wcard .av { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #2a2621; color: #fff; font: 500 15px/1 var(--sans); }
-.wcard h4 { margin-top: 14px; font: 600 19px/1.25 var(--sans); color: var(--ink); word-wrap: break-word; }
-.wcard .meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 400 13px/1 var(--sans); color: #8b847a; }
-.wcard .meta svg { width: 15px; height: 15px; }
-.wcard p { margin-top: 14px; font: 400 15px/1.55 var(--sans); color: #4d4740; white-space: pre-wrap; word-wrap: break-word; }
-.wcard.long:not(.open) p { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
-.wcard .more { margin-top: 12px; padding: 0; font: 500 15px/1 var(--sans); color: var(--ink); }
-.wcard.empty { text-align: center; color: var(--ink-soft); }
+.wcard .top { display: flex; align-items: center; gap: 10px; }
+.wcard .av { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--rose); font: 600 14px/1 var(--sans); }
+.wcard h4 { font: 600 17px/1.2 var(--sans); word-wrap: break-word; }
+.wcard .meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font: 400 12px/1 var(--sans); color: rgba(255,255,255,.8); }
+.wcard .meta svg { width: 13px; height: 13px; }
+.wcard p { margin-top: 12px; font: 400 15px/1.5 var(--sans); color: #fff; white-space: pre-wrap; word-wrap: break-word; }
+.wcard:not(.open) p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.wcard .more { display: none; margin-top: 10px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.25); font: 500 13px/1 var(--sans); color: #fff; }
+.wcard.long .more { display: inline-block; }
+@media (max-width: 480px) { .wcard p { font-size: 14px; } .wcard h4 { font-size: 16px; } }
+.wcard.empty { text-align: center; }
 
 /* ========== Musiqa va ulashish ========== */
 .fab {
@@ -567,12 +570,13 @@ img { display: block; max-width: 100%; }
     const clock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
     $('#wishTrack').innerHTML = wishes.length
       ? wishes.map(w => {
-          const long = (w.text || '').length > 220;
-          return `<article class="wcard${long ? ' long' : ''}"><span class="av">${esc((w.name || '?').trim().charAt(0).toUpperCase())}</span>`
-            + `<h4>${esc(w.name)}</h4><span class="meta">${clock}${timeAgo(w.ts)}</span><p>${esc(w.text)}</p>`
-            + (long ? '<button class="more" type="button">To‘liq o‘qish</button>' : '') + '</article>';
+          return `<article class="wcard"><div class="top"><span class="av">${esc((w.name || '?').trim().charAt(0).toUpperCase())}</span>`
+            + `<div><h4>${esc(w.name)}</h4><span class="meta">${clock}${timeAgo(w.ts)}</span></div></div><p>${esc(w.text)}</p>`
+            + '<button class="more" type="button">Yana</button></article>';
         }).join('')
       : '<article class="wcard empty"><p>Birinchi tilakni siz yozing</p></article>';
+    // 3 qatordan uzun tilaklarda "Yana" tugmasi chiqadi
+    $$('#wishTrack .wcard').forEach(c => { const p = c.querySelector('p'); if (p && p.scrollHeight > p.clientHeight + 2) c.classList.add('long'); });
   }
   function timeAgo(ts) {
     const m = Math.floor((Date.now() - (ts || 0)) / 6e4);
@@ -586,7 +590,7 @@ img { display: block; max-width: 100%; }
   $('#wishTrack').addEventListener('click', e => {
     const b = e.target.closest('.more'); if (!b) return;
     const open = b.parentElement.classList.toggle('open');
-    b.textContent = open ? 'Yopish' : 'To‘liq o‘qish';
+    b.textContent = open ? 'Yopish' : 'Yana';
   });
   // Sichqoncha bilan ham surish: tortib qo'yib yuborilganda keyingi/oldingi kartochkaga silliq o'tadi
   (function wallDrag() {
