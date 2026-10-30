@@ -47,23 +47,23 @@ img { display: block; max-width: 100%; }
   display: grid; place-items: center;
   cursor: pointer; outline: none; touch-action: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity .35s ease, visibility .35s;
+  transition: opacity .15s linear, visibility .15s;
 }
 .intro-bg {
   /* Konvert surati; muhr suratda ekranning o'rtasiga to'g'ri keladi */
   position: absolute; inset: 0;
   background: #2a1a1c url(assets/envelope-wide.webp) 50% 48% / cover;
-  transition: transform .5s cubic-bezier(.5, 0, .75, 0);
+  transition: transform .4s cubic-bezier(.4, 0, .9, .4);
 }
 @media (max-aspect-ratio: 1/1) { .intro-bg { background-image: url(assets/envelope-tall.webp); } }
 /* Bosilganda: biroz ichkariga kattalashib, qorayib o'tadi */
-.intro-dark { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity .45s ease; }
-.intro.opening .intro-bg { transform: scale(1.08); }
+.intro-dark { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity .32s ease-in .05s; }
+.intro.opening .intro-bg { transform: scale(1.22); }
 .intro.opening .intro-dark { opacity: 1; }
 .intro.gone { opacity: 0; visibility: hidden; pointer-events: none; }
 
 /* ========== 2-SAHIFA: asosiy ========== */
-.main { position: relative; z-index: 1; opacity: 0; transition: opacity .35s ease; }
+.main { position: relative; z-index: 1; opacity: 0; transition: opacity .15s linear; }
 .main.revealed { opacity: 1; }
 
 /* Butun sahifa ortida bitta katta rasm: joyida turadi, kontent uning ustidan suriladi — chok yo'q */
@@ -90,7 +90,7 @@ img { display: block; max-width: 100%; }
     linear-gradient(180deg, rgba(60,45,15,.16) 0%, rgba(60,45,15,.02) 30%, rgba(60,45,15,.02) 100%);
 }
 /* 1-sahifadagi oqarishdan silliq davom etadi */
-.hero-white { position: absolute; inset: 0; background: #000; opacity: 1; transition: opacity .6s ease; pointer-events: none; }
+.hero-white { position: absolute; inset: 0; background: #000; opacity: 1; transition: opacity .4s ease-out; pointer-events: none; }
 .main.play .hero-white { opacity: 0; }
 .spark { position: absolute; border-radius: 50%; background: var(--gold-bright); opacity: .35; animation: spark 9s ease-in-out infinite; }
 @keyframes spark { 0%, 100% { transform: translateY(0) scale(1); opacity: .25; } 50% { transform: translateY(-26px) scale(1.15); opacity: .6; } }
@@ -495,7 +495,7 @@ img { display: block; max-width: 100%; }
     opened = true;
     startMusic();
     intro.classList.add('opening');
-    await wait(reduced ? 50 : 450);
+    await wait(reduced ? 50 : 370);
     window.scrollTo(0, 0);
     main.classList.add('revealed');
     main.removeAttribute('aria-hidden');
