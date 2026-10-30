@@ -248,6 +248,7 @@ img { display: block; max-width: 100%; }
 }
 .wish-lbl { display: block; margin: 0 0 8px 2px; font: 400 14px/1 var(--sans); color: rgba(255,255,255,.85); }
 .wish-lbl + * { margin-bottom: 16px; }
+.wish .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .wish input, .wish textarea {
   display: block; width: 100%; padding: 14px 16px; border-radius: 16px;
   border: 1px solid rgba(255,255,255,.38); background: rgba(255,255,255,.2);
@@ -419,6 +420,7 @@ img { display: block; max-width: 100%; }
         <h2 class="sec-title reveal">Tilak yuborish</h2>
         <form class="wish reveal" id="wishForm" novalidate>
           <label class="wish-lbl" for="wName">Kimdan</label>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <input id="wName" name="name" maxlength="60" placeholder="Ismingiz" autocomplete="name" required>
           <label class="wish-lbl" for="wText">Tilagingiz</label>
           <div class="wish-row">
@@ -668,12 +670,17 @@ img { display: block; max-width: 100%; }
       x0 = null; t.style.scrollBehavior = 'smooth'; t.scrollTo({ left: i * w });
       setTimeout(() => { t.style.scrollSnapType = ''; }, 450);
     });
+    let current = null, ticking = false;
     const mark = () => {
-      const c = t.getBoundingClientRect(), mid = c.left + c.width / 2; let best = null, bd = 1e9;
-      for (const el of t.children) { const r = el.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - mid); if (d < bd) { bd = d; best = el; } }
-      for (const el of t.children) el.classList.toggle('on', el === best);
+      ticking = false;
+      const first = t.firstElementChild; if (!first) return;
+      const i = Math.max(0, Math.min(t.children.length - 1, Math.round(t.scrollLeft / (first.offsetWidth + 16))));
+      const el = t.children[i];
+      if (el === current && el.classList.contains('on')) return;
+      if (current) current.classList.remove('on');
+      el.classList.add('on'); current = el;
     };
-    t.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true });
+    t.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
     new MutationObserver(mark).observe(t, { childList: true });
     addEventListener('resize', mark);
   })();
@@ -691,9 +698,12 @@ img { display: block; max-width: 100%; }
     if (!name || !text) { msg.textContent = 'Ismingiz va tilagingizni yozing.'; return; }
     btn.disabled = true; msg.textContent = 'Yuborilmoqda…';
     let wish = { name, text, ts: Date.now() };
+    const website = $('#wishForm .hp').value;
     try {
       if (!serverOk) throw 0;
-      const r = await fetch('/api/wishes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, text }) });
+      const r = await fetch('/api/wishes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, text, website }) });
+      if (r.status === 429) { btn.disabled = false; msg.textContent = 'Juda ko‘p yubordingiz, birozdan keyin urinib ko‘ring.'; return; }
+      if (r.status === 400) { btn.disabled = false; msg.textContent = 'Ismingiz va tilagingizni yozing.'; return; }
       if (!r.ok) throw 0;
       wish = (await r.json()).wish || wish;
     } catch { serverOk = false; writeLocal([wish, ...readLocal()]); }
