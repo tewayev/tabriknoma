@@ -229,6 +229,8 @@ img { display: block; max-width: 100%; }
 /* Tikuv: chet bo'ylab nuqta-nuqta ip */
 .wallet-num { font: 500 clamp(20px, 6.2vw, 30px)/1.2 var(--sans); letter-spacing: .03em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wallet-name { margin-top: 10px; font: 400 15px/1.3 var(--sans); color: rgba(255,255,255,.88); letter-spacing: .04em; }
+.wallet-name { display: none; margin-top: 10px; font: 400 15px/1.3 var(--sans); letter-spacing: .04em; color: rgba(255,255,255,.9); }
+@media (max-width: 480px) { .wtab span { display: none; } .wallet-name { display: block; } }
 .wallet-btns { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
 .wallet-btns button {
   display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 999px;
@@ -291,9 +293,9 @@ img { display: block; max-width: 100%; }
 .wcard .meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font: 400 12px/1 var(--sans); color: rgba(255,255,255,.8); }
 .wcard .meta svg { width: 13px; height: 13px; }
 .wcard p { margin-top: 12px; font: 400 15px/1.5 var(--sans); color: #fff; white-space: pre-wrap; word-wrap: break-word; }
-.wcard:not(.open) p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.wcard .more { display: none; margin-top: 10px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.25); font: 500 13px/1 var(--sans); color: #fff; }
-.wcard.long .more { display: inline-block; }
+.wcard:not(.open) p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3em; }
+.wcard .more { display: inline-block; visibility: hidden; margin-top: 10px; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.25); font: 500 13px/1 var(--sans); color: #fff; }
+.wcard.long .more { visibility: visible; }
 @media (max-width: 480px) { .wcard p { font-size: 14px; } .wcard h4 { font-size: 16px; } }
 .wcard.empty { text-align: center; }
 
@@ -401,6 +403,7 @@ img { display: block; max-width: 100%; }
           <div class="wtab" aria-hidden="true"><span>Humo</span><span>Shaxzodbek Avilqosimov</span></div>
           <div class="wallet-front">
             <p class="wallet-num" id="cardNum"></p>
+            <p class="wallet-name">Shaxzodbek Avilqosimov</p>
                         <div class="wallet-btns">
               <button type="button" id="eyeBtn" aria-label="Karta raqamini ko‘rsatish"><svg class="eye-shut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.6A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.6 3.4M6.6 6.6C4 8.3 2.5 12 2.5 12S6 18.5 12 18.5c1.8 0 3.3-.5 4.6-1.2"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="eyeTxt">Ko‘rsatish</span></button>
               <button type="button" id="copyBtn" aria-label="Karta raqamidan nusxa olish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5v-2a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h2"/></svg>Nusxa</button>
@@ -634,7 +637,7 @@ img { display: block; max-width: 100%; }
             + '<button class="more" type="button">Yana</button></article>';
         }).join('')
       : '<article class="wcard empty"><p>Birinchi tilakni siz yozing</p></article>';
-    // 3 qatordan uzun tilaklarda "Yana" tugmasi chiqadi
+    // 2 qatordan uzun tilaklarda "Yana" tugmasi chiqadi
     $$('#wishTrack .wcard').forEach(c => { const p = c.querySelector('p'); if (p && p.scrollHeight > p.clientHeight + 2) c.classList.add('long'); });
   }
   function timeAgo(ts) {
